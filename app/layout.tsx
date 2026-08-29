@@ -1,6 +1,16 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Manrope } from "next/font/google";
+import { Splash, SPLASH_SESSION_KEY } from "@/components/splash/Splash";
 import "./globals.css";
+
+/**
+ * Runs while the document is still parsing, before anything is painted.
+ * If the splash has already played this session it marks the document so
+ * the panel is hidden by CSS immediately — no flash on refresh.
+ */
+const splashPrePaint = `try{if(sessionStorage.getItem(${JSON.stringify(
+  SPLASH_SESSION_KEY,
+)})==="1"){document.documentElement.dataset.splash="done"}}catch(e){}`;
 
 const dmSerifDisplay = DM_Serif_Display({
   weight: "400",
@@ -69,6 +79,8 @@ export default function RootLayout({
       className={`${dmSerifDisplay.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-ivory font-sans text-ink-text">
+        <script dangerouslySetInnerHTML={{ __html: splashPrePaint }} />
+        <Splash />
         {children}
       </body>
     </html>

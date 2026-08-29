@@ -209,3 +209,170 @@
 
   [data-reveal] { opacity: 1; transform: none; }
 }
+
+/* ============================================================
+   SPLASH — first-load brand moment
+   CSS drives the whole timeline, so the panel clears itself
+   even if JavaScript never runs. Splash.tsx only handles
+   unmounting and the once-per-session flag.
+   ============================================================ */
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  place-items: center;
+  background-color: var(--ink);
+  clip-path: inset(0 0 0 0);
+  animation: splash-exit 0.72s cubic-bezier(0.76, 0, 0.24, 1) 1.88s forwards;
+}
+
+/* Already seen this session — hidden before first paint, no flash. */
+[data-splash="done"] .splash {
+  display: none;
+}
+
+.splash__glow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    46% 40% at 50% 44%,
+    color-mix(in srgb, var(--sage) 22%, transparent),
+    transparent 70%
+  );
+  opacity: 0;
+  animation: splash-rise 1.3s ease-out 0.2s forwards;
+}
+
+.splash__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.07;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.splash__inner {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 1.5rem;
+  /* the panel drifts up slightly as it wipes — a hint of parallax */
+  animation: splash-lift 0.72s cubic-bezier(0.76, 0, 0.24, 1) 1.88s forwards;
+}
+
+/* --- the leaf, drawn in --- */
+.splash__leaf path {
+  stroke: var(--sage-soft);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  fill: none;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  vector-effect: non-scaling-stroke;
+}
+.splash__leaf .s-outline { animation: draw 0.66s cubic-bezier(0.65, 0, 0.35, 1) 0.06s forwards; }
+.splash__leaf .s-rib     { animation: draw 0.46s ease-out 0.38s forwards; }
+.splash__leaf .s-vein    { animation: draw 0.36s ease-out forwards; }
+.splash__leaf .s-vein:nth-of-type(1) { animation-delay: 0.50s; }
+.splash__leaf .s-vein:nth-of-type(2) { animation-delay: 0.56s; }
+.splash__leaf .s-vein:nth-of-type(3) { animation-delay: 0.62s; }
+.splash__leaf .s-vein:nth-of-type(4) { animation-delay: 0.68s; }
+
+/* --- the droplet and its ripple --- */
+.splash__drop {
+  fill: var(--cream);
+  opacity: 0;
+  transform-origin: 60px 108px;
+  animation: splash-drop 0.46s cubic-bezier(0.45, 0, 0.9, 0.45) 0.82s forwards;
+}
+.splash__ripple {
+  fill: none;
+  stroke: var(--sage-soft);
+  stroke-width: 1.2;
+  opacity: 0;
+  transform-origin: 60px 126px;
+  animation: splash-ripple 0.62s cubic-bezier(0.2, 0.8, 0.3, 1) 1.24s forwards;
+}
+.splash__ripple--late { animation-delay: 1.37s; }
+
+/* --- wordmark, tagline, progress --- */
+.splash__logo {
+  opacity: 0;
+  animation: splash-rise 0.62s cubic-bezier(0.22, 1, 0.36, 1) 0.92s forwards;
+}
+.splash__tagline {
+  opacity: 0;
+  animation: splash-rise 0.62s cubic-bezier(0.22, 1, 0.36, 1) 1.12s forwards;
+}
+.splash__bar {
+  position: relative;
+  overflow: hidden;
+  background-color: color-mix(in srgb, var(--sage-soft) 20%, transparent);
+}
+.splash__bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform-origin: left center;
+  transform: scaleX(0);
+  background-color: var(--sage-soft);
+  animation: splash-fill 1.76s cubic-bezier(0.35, 0.9, 0.4, 1) 0.04s forwards;
+}
+
+@keyframes draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes splash-drop {
+  0%   { opacity: 0; transform: translateY(-3px) scale(0.3); }
+  30%  { opacity: 1; transform: translateY(0) scale(1); }
+  46%  { opacity: 1; transform: translateY(1px) scale(1.08); }
+  90%  { opacity: 1; transform: translateY(16px) scale(0.94); }
+  100% { opacity: 0; transform: translateY(18px) scale(0.78); }
+}
+@keyframes splash-ripple {
+  0%   { opacity: 0.8; transform: scale(0.08); }
+  100% { opacity: 0; transform: scale(1); }
+}
+@keyframes splash-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes splash-fill {
+  to { transform: scaleX(1); }
+}
+@keyframes splash-exit {
+  to { clip-path: inset(0 0 100% 0); }
+}
+@keyframes splash-lift {
+  to { transform: translateY(-3.5%); opacity: 0.85; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* No drawing, no falling — the mark is simply present, then gone. */
+  .splash {
+    animation: splash-fade 0.4s ease 0.9s forwards;
+  }
+  .splash__inner { animation: none; }
+  .splash__leaf path {
+    stroke-dashoffset: 0;
+    animation: none;
+  }
+  .splash__drop,
+  .splash__ripple { display: none; }
+  .splash__logo,
+  .splash__tagline {
+    opacity: 1;
+    animation: none;
+  }
+  .splash__bar::after {
+    transform: scaleX(1);
+    animation: none;
+  }
+}
+
+@keyframes splash-fade {
+  to { opacity: 0; visibility: hidden; }
+}
