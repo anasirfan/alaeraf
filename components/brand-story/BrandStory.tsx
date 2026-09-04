@@ -18,11 +18,10 @@ export function BrandStory() {
           <Reveal className="lg:col-span-5">
             <div className="relative">
               <Media
-                src="/images/botanical-shadow.jpg"
-                alt="Soft daylight casting fern shadows across a warm plaster wall"
+                src="/images/brand-duo.jpg"
+                alt="Al Aeraf herbal hair oil and Al Aeraf RO water bottles, the two product lines shown together"
                 className="arch-soft aspect-[4/5] w-full shadow-[0_50px_90px_-50px_rgba(20,54,31,0.5)]"
                 sizes="(max-width: 1024px) 92vw, 40vw"
-                imgClassName="object-[55%_50%]"
               />
               <span
                 className="absolute -bottom-10 -right-10 hidden h-28 w-28 rounded-full border border-line lg:block"

@@ -40,20 +40,44 @@ export function Hero() {
       id="home"
       className="relative isolate flex min-h-[100svh] flex-col overflow-hidden bg-ink"
     >
-      {/* Background photography */}
+      {/* Background photography — the two real product worlds, held apart by a seam */}
       <div className="absolute inset-0 -z-10">
-        <Image
-          src="/images/hero-leaf.jpg"
-          alt="A broad green leaf covered in fresh rain droplets"
-          fill
-          priority
-          quality={78}
-          sizes="100vw"
-          className="anim-fade object-cover object-[64%_40%] sm:object-[58%_42%]"
+        <div className="absolute inset-0 flex flex-col sm:flex-row">
+          <div className="relative h-1/2 w-full overflow-hidden sm:h-full sm:w-1/2">
+            <Image
+              src="/images/oil-hero.jpg"
+              alt="Two bottles of Al Aeraf herbal hair oil"
+              fill
+              priority
+              quality={78}
+              sizes="50vw"
+              className="anim-fade object-cover object-[50%_32%]"
+            />
+            <div className="absolute inset-0 bg-forest/40 mix-blend-multiply" aria-hidden="true" />
+          </div>
+          <div className="relative h-1/2 w-full overflow-hidden sm:h-full sm:w-1/2">
+            <Image
+              src="/images/water-glass.jpg"
+              alt="Two Al Aeraf RO water bottles"
+              fill
+              priority
+              quality={78}
+              sizes="50vw"
+              className="anim-fade object-cover object-[50%_36%]"
+            />
+            <div className="absolute inset-0 bg-aqua-deep/35 mix-blend-multiply" aria-hidden="true" />
+          </div>
+        </div>
+
+        {/* Seam — the two worlds meet without merging */}
+        <div
+          className="pointer-events-none absolute inset-y-0 left-1/2 hidden w-px -translate-x-1/2 bg-cream/25 sm:block"
+          aria-hidden="true"
         />
-        {/* Directional scrim — keeps the photograph breathing while type stays legible */}
-        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/20 sm:via-ink/52" />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink/88 via-ink/28 to-transparent" />
+
+        {/* Directional scrim — keeps the photography breathing while type stays legible */}
+        <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/72 to-ink/25 sm:via-ink/58" />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink/90 via-ink/40 to-ink/15" />
         <div className="grain absolute inset-0 opacity-[0.06] mix-blend-overlay" />
       </div>
 

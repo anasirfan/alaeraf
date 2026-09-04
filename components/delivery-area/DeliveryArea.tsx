@@ -7,79 +7,19 @@ import { delivery } from "@/data/content";
 import { routes } from "@/lib/site";
 
 /**
- * Location-inspired illustration — not a real map.
- * When the RO plant coordinates and 5 km radius go live, this is the only
- * visual that needs replacing.
+ * Real Google Map, centred on the delivery neighbourhoods. This is a plain
+ * `output=embed` iframe — no API key, no client JS, no address lookup or
+ * geolocation. It is a static reference map, not a live coverage checker.
  */
-function CoverageMap() {
-  const blocks = [
-    [26, 30, 58, 34], [96, 22, 74, 30], [186, 34, 52, 44],
-    [30, 82, 46, 52], [90, 68, 84, 40], [188, 92, 62, 30],
-    [24, 148, 66, 38], [104, 122, 54, 56], [176, 138, 74, 44],
-    [40, 202, 88, 34], [146, 196, 62, 48], [222, 178, 42, 60],
-  ];
-  const pins = [
-    { x: 112, y: 96 }, { x: 168, y: 128 }, { x: 92, y: 168 },
-    { x: 186, y: 84 }, { x: 140, y: 196 },
-  ];
-
+function ServiceAreaMap() {
   return (
-    <svg viewBox="0 0 280 260" className="h-auto w-full" role="img" aria-label="Illustrative map of the Al Aeraf delivery neighbourhoods">
-      <defs>
-        <radialGradient id="glow" cx="50%" cy="50%">
-          <stop offset="0%" stopColor="var(--sage)" stopOpacity="0.28" />
-          <stop offset="100%" stopColor="var(--sage)" stopOpacity="0" />
-        </radialGradient>
-      </defs>
-
-      {/* street blocks */}
-      <g opacity="0.5">
-        {blocks.map(([x, y, w, h], i) => (
-          <rect
-            key={i}
-            x={x}
-            y={y}
-            width={w}
-            height={h}
-            rx="3"
-            fill="var(--sage-soft)"
-            opacity={0.07 + (i % 3) * 0.025}
-            stroke="var(--sage-soft)"
-            strokeOpacity="0.12"
-          />
-        ))}
-      </g>
-
-      {/* arterial roads */}
-      <g stroke="var(--sage-soft)" strokeOpacity="0.16" strokeWidth="1.2" fill="none">
-        <path d="M0 118h280M132 0v260M0 60C70 66 120 40 190 52s70 6 90 0" />
-      </g>
-
-      {/* coverage radius */}
-      <circle cx="140" cy="130" r="104" fill="url(#glow)" />
-      {[52, 78, 104].map((r, i) => (
-        <circle
-          key={r}
-          cx="140"
-          cy="130"
-          r={r}
-          fill="none"
-          stroke="var(--sage-soft)"
-          strokeOpacity={0.5 - i * 0.13}
-          strokeWidth="1"
-          strokeDasharray={i === 2 ? "5 6" : undefined}
-        />
-      ))}
-
-      {/* neighbourhood markers */}
-      {pins.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r="3" fill="var(--sage-soft)" opacity="0.7" />
-      ))}
-
-      {/* plant */}
-      <circle cx="140" cy="130" r="12" fill="var(--cream)" opacity="0.14" />
-      <circle cx="140" cy="130" r="5.5" fill="var(--cream)" />
-    </svg>
+    <iframe
+      title="Al Aeraf delivery area — Nazimabad and nearby, Karachi"
+      src="https://maps.google.com/maps?q=Nazimabad,+Karachi,+Pakistan&z=13&output=embed"
+      className="h-full w-full rounded-sm border-0 grayscale-[15%]"
+      loading="lazy"
+      referrerPolicy="no-referrer-when-downgrade"
+    />
   );
 }
 
@@ -135,10 +75,12 @@ export function DeliveryArea() {
           </div>
 
           <Reveal delay={140} className="lg:col-span-6">
-            <div className="relative mx-auto max-w-md rounded-sm border border-cream/12 bg-ink/40 p-6 sm:p-9 lg:max-w-none">
-              <CoverageMap />
-              <div className="mt-6 flex items-center justify-between border-t border-cream/12 pt-5">
-                <span className="eyebrow text-cream/60">Illustrative coverage</span>
+            <div className="relative mx-auto max-w-md rounded-sm border border-cream/12 bg-ink/40 p-3 sm:p-4 lg:max-w-none">
+              <div className="aspect-[4/3] w-full overflow-hidden rounded-sm sm:aspect-[5/4]">
+                <ServiceAreaMap />
+              </div>
+              <div className="mt-5 flex items-center justify-between px-2 pb-1">
+                <span className="eyebrow text-cream/60">Service area</span>
                 <span className="eyebrow text-sage-soft/70">Karachi</span>
               </div>
             </div>
