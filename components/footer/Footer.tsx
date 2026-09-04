@@ -78,7 +78,7 @@ export function Footer() {
             </nav>
           ))}
 
-          {/* Contact — placeholders until real details are provided */}
+          {/* Contact */}
           <div className="lg:col-span-3">
             <h2 className="eyebrow text-sage-soft/70">Contact</h2>
             <dl className="mt-5 space-y-3.5">
@@ -87,7 +87,18 @@ export function Footer() {
                   <dt className="text-[0.7rem] tracking-[0.14em] text-cream/55 uppercase">
                     {row.label}
                   </dt>
-                  <dd className="mt-1 text-sm text-cream/70">{row.value}</dd>
+                  <dd className="mt-1 text-sm text-cream/70">
+                    {"href" in row && row.href ? (
+                      <a
+                        href={row.href}
+                        className="transition-colors duration-300 hover:text-cream"
+                      >
+                        {row.value}
+                      </a>
+                    ) : (
+                      row.value
+                    )}
+                  </dd>
                 </div>
               ))}
             </dl>

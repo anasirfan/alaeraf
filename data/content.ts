@@ -232,9 +232,10 @@ export const footer = {
       ],
     },
   ],
-  /** Placeholders — replace with real business details before launch. */
   contact: [
-    { label: "Phone", value: "Contact number to be added" },
+    { label: "Phone", value: "0347 2249475", href: "tel:+923472249475" },
+    { label: "Website", value: "www.al-aeraf.com", href: "https://www.al-aeraf.com" },
+    /** Placeholder — replace with a real inbox before launch. */
     { label: "Email", value: "Email address to be added" },
     { label: "Service area", value: "Karachi — Nazimabad & nearby" },
   ],

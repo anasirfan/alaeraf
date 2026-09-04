@@ -12,7 +12,7 @@ export const site = {
   title: "Al Aeraf — Herbal Hair Care & Pure RO Water",
   description:
     "Herbal hair oil and pure RO drinking water from Al Aeraf — nature-inspired everyday care, delivered simply across Karachi neighbourhoods.",
-  url: "https://alaeraf.com",
+  url: "https://www.al-aeraf.com",
   locale: "en_PK",
 } as const;
 
