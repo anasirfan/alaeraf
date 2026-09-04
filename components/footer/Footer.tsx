@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { footer, hero } from "@/data/content";
@@ -21,7 +22,7 @@ export function Footer() {
                   : "sm:pl-8"
               }
             >
-              <a
+              <Link
                 href={item.href}
                 className="group flex items-center justify-between gap-6 py-7 transition-opacity duration-300 hover:opacity-75"
               >
@@ -35,7 +36,7 @@ export function Footer() {
                   className="h-5 w-5 shrink-0 text-cream/50 transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 group-hover:text-cream"
                   strokeWidth={1.5}
                 />
-              </a>
+              </Link>
             </li>
           ))}
         </ul>
@@ -66,12 +67,12 @@ export function Footer() {
               <ul className="mt-5 space-y-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
-                    <a
+                    <Link
                       href={link.href}
                       className="text-sm text-cream/70 transition-colors duration-300 hover:text-cream"
                     >
                       {link.label}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

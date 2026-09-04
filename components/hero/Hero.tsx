@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { hero } from "@/data/content";
@@ -138,7 +139,7 @@ export function Hero() {
                     : "sm:pl-8"
                 }
               >
-                <a
+                <Link
                   href={item.href}
                   className="group flex items-center gap-4 py-4 transition-opacity duration-300 hover:opacity-80 sm:items-start sm:gap-5 sm:py-7"
                 >
@@ -165,7 +166,7 @@ export function Hero() {
                     <ArrowUpRight className="h-4 w-4" strokeWidth={1.6} />
                     <span className="sr-only">{item.cta}</span>
                   </span>
-                </a>
+                </Link>
               </li>
             ))}
           </ul>

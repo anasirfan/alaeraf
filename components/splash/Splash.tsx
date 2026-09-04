@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { site } from "@/lib/site";
+import { SPLASH_SESSION_KEY } from "@/lib/splash";
 
 /**
  * First-load brand moment: a leaf drawn in hairline, a droplet that falls
@@ -20,8 +21,6 @@ import { site } from "@/lib/site";
 
 const TOTAL_MS = 2_750; // 1.88s hold + 0.72s wipe, plus a little slack
 const REDUCED_MS = 1_400;
-
-export const SPLASH_SESSION_KEY = "alaeraf:splash";
 
 export function Splash() {
   const [done, setDone] = useState(false);

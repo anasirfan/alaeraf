@@ -1,31 +1,22 @@
-import { Navbar } from "@/components/navbar/Navbar";
 import { Hero } from "@/components/hero/Hero";
 import { BrandStory } from "@/components/brand-story/BrandStory";
-import { HairOilSection } from "@/components/hair-oil/HairOilSection";
-import { WaterSection } from "@/components/water/WaterSection";
-import { SubscriptionSection } from "@/components/subscription/SubscriptionSection";
-import { DeliveryArea } from "@/components/delivery-area/DeliveryArea";
 import { WhyAlAeraf } from "@/components/why-al-aeraf/WhyAlAeraf";
 import { Testimonials } from "@/components/testimonials/Testimonials";
 import { FinalCTA } from "@/components/final-cta/FinalCTA";
-import { Footer } from "@/components/footer/Footer";
 
+/**
+ * Home is a hub, not the whole story. Each product and program gets its own
+ * dedicated route with detailed content; this page introduces both worlds
+ * and hands off via Hero's index, BrandStory's pillars and FinalCTA.
+ */
 export default function Home() {
   return (
     <>
-      <Navbar />
-      <main className="flex-1">
-        <Hero />
-        <BrandStory />
-        <HairOilSection />
-        <WaterSection />
-        <SubscriptionSection />
-        <DeliveryArea />
-        <WhyAlAeraf />
-        <Testimonials />
-        <FinalCTA />
-      </main>
-      <Footer />
+      <Hero />
+      <BrandStory />
+      <WhyAlAeraf />
+      <Testimonials />
+      <FinalCTA />
     </>
   );
 }

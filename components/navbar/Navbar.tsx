@@ -1,12 +1,17 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Menu, ShoppingBag, X } from "lucide-react";
 import { nav, routes, site } from "@/lib/site";
 import { Container } from "@/components/ui/Container";
 
 export function Navbar() {
+  const pathname = usePathname();
+  const isHome = pathname === "/";
+
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
@@ -30,12 +35,15 @@ export function Navbar() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  const onDark = !scrolled;
+  // Only the Home page opens on a full-bleed dark hero, so only there does the
+  // navbar start transparent-on-dark; every interior page gets the opaque,
+  // dark-text bar from the first frame regardless of scroll position.
+  const onDark = isHome && !scrolled;
 
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-[background-color,box-shadow,border-color] duration-500 ${
-        scrolled
+        scrolled || !isHome
           ? "border-b border-line/70 bg-ivory/92 backdrop-blur-md"
           : "border-b border-transparent bg-transparent"
       }`}
@@ -43,8 +51,8 @@ export function Navbar() {
       <Container>
         <div className="flex h-[4.5rem] items-center justify-between gap-4 lg:h-20">
           {/* Logo */}
-          <a
-            href="#home"
+          <Link
+            href="/"
             className="relative block shrink-0"
             aria-label={`${site.name} — home`}
           >
@@ -71,30 +79,37 @@ export function Navbar() {
                 }`}
               />
             </span>
-          </a>
+          </Link>
 
           {/* Desktop nav */}
           <nav className="hidden lg:block" aria-label="Primary">
             <ul className="flex items-center gap-9">
-              {nav.map((item) => (
-                <li key={item.href}>
-                  <a
-                    href={item.href}
-                    className={`group relative text-[0.8125rem] font-medium tracking-[0.04em] transition-colors duration-300 ${
-                      onDark
-                        ? "text-cream/80 hover:text-cream"
-                        : "text-muted hover:text-forest"
-                    }`}
-                  >
-                    {item.label}
-                    <span
-                      className={`absolute -bottom-1.5 left-0 h-px w-0 transition-[width] duration-300 group-hover:w-full ${
-                        onDark ? "bg-cream/70" : "bg-forest/50"
+              {nav.map((item) => {
+                const active = pathname === item.href;
+                return (
+                  <li key={item.href}>
+                    <Link
+                      href={item.href}
+                      className={`group relative text-[0.8125rem] font-medium tracking-[0.04em] transition-colors duration-300 ${
+                        onDark
+                          ? active
+                            ? "text-cream"
+                            : "text-cream/80 hover:text-cream"
+                          : active
+                            ? "text-forest"
+                            : "text-muted hover:text-forest"
                       }`}
-                    />
-                  </a>
-                </li>
-              ))}
+                    >
+                      {item.label}
+                      <span
+                        className={`absolute -bottom-1.5 left-0 h-px transition-[width] duration-300 group-hover:w-full ${
+                          active ? "w-full" : "w-0"
+                        } ${onDark ? "bg-cream/70" : "bg-forest/50"}`}
+                      />
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
 
@@ -118,7 +133,7 @@ export function Navbar() {
               />
             </button>
 
-            <a
+            <Link
               href={routes.orderNow}
               className={`hidden rounded-full px-5 py-2.5 text-[0.8125rem] font-semibold tracking-[0.02em] transition-colors duration-300 sm:inline-flex ${
                 onDark
@@ -127,7 +142,7 @@ export function Navbar() {
               }`}
             >
               Order Now
-            </a>
+            </Link>
 
             <button
               type="button"
@@ -181,7 +196,7 @@ export function Navbar() {
             <ul className="space-y-1">
               {nav.map((item, i) => (
                 <li key={item.href} className="border-b border-cream/12">
-                  <a
+                  <Link
                     href={item.href}
                     onClick={() => setOpen(false)}
                     className="flex items-baseline gap-4 py-4 font-display text-[1.65rem] leading-none transition-opacity duration-300 hover:opacity-70"
@@ -196,20 +211,20 @@ export function Navbar() {
                       {String(i + 1).padStart(2, "0")}
                     </span>
                     {item.label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
           </nav>
 
           <div className="space-y-3 px-6 pb-10 pt-6">
-            <a
+            <Link
               href={routes.orderNow}
               onClick={() => setOpen(false)}
               className="flex w-full items-center justify-center rounded-full bg-cream px-6 py-3.5 text-sm font-semibold text-forest"
             >
               Order Now
-            </a>
+            </Link>
             <button
               type="button"
               className="flex w-full items-center justify-center gap-2 rounded-full border border-cream/30 px-6 py-3.5 text-sm font-semibold text-cream"

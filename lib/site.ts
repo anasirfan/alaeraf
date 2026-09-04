@@ -17,24 +17,24 @@ export const site = {
 } as const;
 
 export const nav = [
-  { label: "Home", href: "#home" },
-  { label: "Hair Oil", href: "#hair-oil" },
-  { label: "RO Water", href: "#ro-water" },
-  { label: "Subscription", href: "#subscription" },
-  { label: "About", href: "#about" },
+  { label: "Home", href: "/" },
+  { label: "Hair Oil", href: "/hair-oil" },
+  { label: "RO Water", href: "/ro-water" },
+  { label: "Subscription", href: "/subscription" },
+  { label: "About", href: "/about" },
 ] as const;
 
 /**
- * Placeholder destinations. Swap these for real routes when commerce is wired.
- * e.g. orderNow: "/checkout", hairOil: "/products/herbal-hair-oil"
+ * Real routes. `orderNow` and `cart` stay pointed at Contact until checkout
+ * is wired up — there is no cart yet, so "ordering" today means reaching us.
  */
 export const routes = {
-  orderNow: "#order",
-  hairOil: "#hair-oil",
-  water: "#ro-water",
-  subscription: "#subscription",
-  deliveryAreas: "#delivery",
-  contact: "#contact",
-  faqs: "#faqs",
-  cart: "#cart",
+  orderNow: "/contact",
+  hairOil: "/hair-oil",
+  water: "/ro-water",
+  subscription: "/subscription",
+  deliveryAreas: "/delivery-areas",
+  contact: "/contact",
+  faqs: "/faqs",
+  cart: "/contact",
 } as const;

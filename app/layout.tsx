@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { DM_Serif_Display, Manrope } from "next/font/google";
-import { Splash, SPLASH_SESSION_KEY } from "@/components/splash/Splash";
+import { Splash } from "@/components/splash/Splash";
+import { Navbar } from "@/components/navbar/Navbar";
+import { Footer } from "@/components/footer/Footer";
+import { site } from "@/lib/site";
+import { SPLASH_SESSION_KEY } from "@/lib/splash";
 import "./globals.css";
 
 /**
@@ -26,8 +30,11 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://alaeraf.com"),
-  title: "Al Aeraf — Herbal Hair Care & Pure RO Water",
+  metadataBase: new URL(site.url),
+  title: {
+    default: site.title,
+    template: `%s — ${site.name}`,
+  },
   description:
     "Premium herbal hair oil and pure RO drinking water, thoughtfully delivered to your doorstep. Pure by nature.",
   keywords: [
@@ -81,7 +88,9 @@ export default function RootLayout({
       <body className="flex min-h-full flex-col bg-ivory font-sans text-ink-text">
         <script dangerouslySetInnerHTML={{ __html: splashPrePaint }} />
         <Splash />
-        {children}
+        <Navbar />
+        <main className="flex-1">{children}</main>
+        <Footer />
       </body>
     </html>
   );

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 
 type Variant = "solid" | "outline" | "light" | "lightOutline" | "water";
 type Size = "md" | "lg";
@@ -46,6 +47,16 @@ export function Button({
   const cls = `${base} ${variants[variant]} ${sizes[size]} ${className}`;
 
   if (href) {
+    // External / non-navigational links (tel:, mailto:, http(s), plain hash)
+    // stay as a real anchor; internal routes go through next/link.
+    const isInternal = href.startsWith("/");
+    if (isInternal) {
+      return (
+        <Link href={href} className={cls} aria-label={ariaLabel}>
+          {children}
+        </Link>
+      );
+    }
     return (
       <a href={href} className={cls} aria-label={ariaLabel}>
         {children}
