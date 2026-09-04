@@ -49,6 +49,7 @@ export const brandStory = {
 export const hairOil = {
   no: "01",
   eyebrow: "Herbal Hair Oil",
+  tagline: "Nourished roots. Stronger you.",
   headline: "A slower kind of\nhair care.",
   lede:
     "Warm, botanical and unhurried. Al Aeraf hair oil is made for the evening ritual — worked through the scalp, left to settle, rinsed the next morning.",
@@ -66,6 +67,8 @@ export const hairOil = {
       body: "Blended and bottled with care, in quantities we can watch closely.",
     },
   ],
+  /** Formulation callouts as printed on the product label. */
+  badges: ["No Parabens", "No Sulfates", "No Mineral Oil", "Cruelty-Free"],
   cta: "Explore Hair Oil",
   note: "A cosmetic hair-care product. Not intended to treat or prevent any condition.",
 } as const;
@@ -73,6 +76,7 @@ export const hairOil = {
 export const water = {
   no: "02",
   eyebrow: "RO Drinking Water",
+  tagline: "Pure water. Pure life.",
   headline: "Pure water.\nDelivered to your doorstep.",
   lede:
     "Reverse-osmosis drinking water for the kitchen, the office cooler and everything in between — brought to your door within our supported areas.",
@@ -81,6 +85,8 @@ export const water = {
     { value: "19L", label: "Standard household bottle" },
     { value: "Local", label: "Neighbourhood delivery" },
   ],
+  /** Quality callouts as printed on the product label. */
+  badges: ["100% Pure & Safe", "pH Balanced", "Refreshing Taste"],
   cta: "Order RO Water",
 } as const;
 

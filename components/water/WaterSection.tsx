@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Droplets } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Reveal } from "@/components/ui/Reveal";
@@ -45,6 +45,20 @@ export function WaterSection() {
               {water.lede}
             </p>
           </Reveal>
+
+          <Reveal delay={210}>
+            <ul className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
+              {water.badges.map((badge) => (
+                <li
+                  key={badge}
+                  className="eyebrow flex items-center gap-2 text-[0.7rem] text-aqua-deep"
+                >
+                  <Droplets className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
+                  {badge}
+                </li>
+              ))}
+            </ul>
+          </Reveal>
         </div>
       </Container>
 
@@ -73,7 +87,7 @@ export function WaterSection() {
           <Reveal delay={130} className="col-span-1 lg:col-span-5 lg:mt-28">
             <Media
               src="/images/water-glass.jpg"
-              alt="A glass of water on a pale table, its shadow drawn out by afternoon light"
+              alt="Two Al Aeraf branded RO water bottles against a mountain lake backdrop"
               className="aspect-[3/4] w-full rounded-t-[7rem] rounded-b-sm"
               sizes="(max-width: 1024px) 46vw, 36vw"
             />
@@ -83,7 +97,7 @@ export function WaterSection() {
           <Reveal className="col-span-1 lg:col-span-7">
             <Media
               src="/images/water-pour.jpg"
-              alt="Water poured from a glass carafe into a tumbler in natural daylight"
+              alt="Close-up of an Al Aeraf RO water bottle neck and label, beaded with condensation"
               className="aspect-[3/4] w-full rounded-t-[7rem] rounded-b-sm lg:aspect-[4/5]"
               sizes="(max-width: 1024px) 46vw, 52vw"
             />

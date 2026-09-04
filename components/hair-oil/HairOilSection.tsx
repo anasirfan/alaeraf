@@ -1,4 +1,4 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Leaf } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
@@ -63,7 +63,21 @@ export function HairOilSection() {
               ))}
             </ul>
 
-            <Reveal delay={430} className="mt-10">
+            <Reveal delay={400}>
+              <ul className="mt-10 flex flex-wrap items-center gap-x-6 gap-y-3 border-t border-forest/12 pt-6">
+                {hairOil.badges.map((badge) => (
+                  <li
+                    key={badge}
+                    className="eyebrow flex items-center gap-2 text-[0.7rem] text-botanical"
+                  >
+                    <Leaf className="h-3.5 w-3.5" strokeWidth={1.5} aria-hidden="true" />
+                    {badge}
+                  </li>
+                ))}
+              </ul>
+            </Reveal>
+
+            <Reveal delay={440} className="mt-10">
               <Button href={routes.hairOil} size="lg" variant="solid">
                 {hairOil.cta}
                 <ArrowRight
@@ -85,7 +99,7 @@ export function HairOilSection() {
             <div className="relative mx-auto max-w-xl lg:max-w-none lg:pl-10">
               <Media
                 src="/images/oil-hero.jpg"
-                alt="An amber glass dropper bottle of herbal hair oil resting in soft palm-frond shadow"
+                alt="Two amber glass bottles of Al Aeraf herbal hair oil standing together against a warm, softly lit botanical backdrop"
                 className="arch aspect-[4/5] w-full shadow-[0_60px_100px_-55px_rgba(20,54,31,0.55)] sm:aspect-[5/6]"
                 sizes="(max-width: 1024px) 92vw, 46vw"
               />
@@ -93,7 +107,7 @@ export function HairOilSection() {
               <div className="absolute -bottom-10 -left-2 w-[38%] max-w-[12rem] sm:-bottom-12 sm:-left-8 lg:left-0">
                 <Media
                   src="/images/oil-detail.jpg"
-                  alt="A dropper bottle laid on natural linen beside a fresh green leaf"
+                  alt="Close-up of the Al Aeraf herbal hair oil bottle cap and label"
                   className="arch aspect-[3/4] w-full ring-[10px] ring-sand shadow-[0_30px_60px_-30px_rgba(20,54,31,0.55)]"
                   sizes="(max-width: 640px) 40vw, 200px"
                 />
@@ -108,6 +122,29 @@ export function HairOilSection() {
           </Reveal>
         </div>
       </Container>
+
+      {/* Full-bleed banner — real product photography with frontend-rendered type */}
+      <Reveal delay={100} className="relative mt-20 sm:mt-24 lg:mt-28">
+        <Media
+          src="/images/oil-banner.jpg"
+          alt="Two bottles of Al Aeraf herbal hair oil among green leaves"
+          className="aspect-[4/5] w-full sm:aspect-[16/8] lg:aspect-[21/8]"
+          sizes="100vw"
+          quality={78}
+        />
+        <div
+          className="pointer-events-none absolute inset-0 bg-gradient-to-r from-forest/85 via-forest/35 to-transparent"
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 flex items-center">
+          <Container>
+            <div className="max-w-sm">
+              <Eyebrow tone="light">{hairOil.eyebrow}</Eyebrow>
+              <p className="display-3 mt-4 font-display text-cream">{hairOil.tagline}</p>
+            </div>
+          </Container>
+        </div>
+      </Reveal>
     </section>
   );
 }
