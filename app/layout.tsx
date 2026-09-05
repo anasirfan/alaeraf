@@ -76,6 +76,20 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
+/**
+ * Applies to every statically-rendered page in the tree (Home, About,
+ * Contact, FAQs, Delivery Areas, Subscription info — the ones with no
+ * page-level `dynamic`/`revalidate` of their own): Footer renders on all of
+ * them, and now reads business_phone/email/address from the admin-editable
+ * site_settings table (see components/footer/Footer.tsx), so this keeps
+ * those pages' Footer contact details from going stale for longer than 5
+ * minutes after an admin saves a change in Settings — the same window
+ * already used by /hair-oil and /ro-water. Pages that set their own
+ * `dynamic = "force-dynamic"` (admin, account, checkout, etc.) are
+ * unaffected — that setting always wins over this one.
+ */
+export const revalidate = 300;
+
 export default function RootLayout({
   children,
 }: Readonly<{
