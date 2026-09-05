@@ -1,10 +1,11 @@
 "use client";
 
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Input } from "@/components/ui/Input";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { FormMessage } from "@/components/ui/FormMessage";
 import { Toggle } from "@/components/ui/Toggle";
+import { AddressAutocomplete } from "@/components/address/AddressAutocomplete";
 import type { RoPlantRow } from "@/lib/ro-plants/adminRoPlants";
 import { createRoPlantAction, updateRoPlantAction, type RoPlantState } from "./actions";
 
@@ -18,6 +19,13 @@ export function RoPlantForm({ plant, onDone }: { plant?: RoPlantRow; onDone?: ()
   const isEdit = !!plant;
   const action = isEdit ? updateRoPlantAction : createRoPlantAction;
   const [state, formAction] = useActionState<RoPlantState, FormData>(action, undefined);
+
+  // Controlled only so AddressAutocomplete (search box + map, same one used
+  // on the customer-facing address forms) can fill these in when a place is
+  // picked — typing coordinates directly still works exactly as before.
+  const [lat, setLat] = useState(plant?.latitude != null ? String(plant.latitude) : "");
+  const [lng, setLng] = useState(plant?.longitude != null ? String(plant.longitude) : "");
+  const [address, setAddress] = useState(plant?.address ?? "");
 
   useEffect(() => {
     if (isEdit && state?.success && onDone) {
@@ -54,9 +62,23 @@ export function RoPlantForm({ plant, onDone }: { plant?: RoPlantRow; onDone?: ()
         label="Address (optional, for your own reference)"
         name="address"
         type="text"
-        defaultValue={plant?.address ?? ""}
+        value={address}
+        onChange={(e) => setAddress(e.target.value)}
         placeholder="Street / area / landmark"
         hint="Shown only in the admin dashboard — customers never see this directly."
+      />
+
+      <AddressAutocomplete
+        lat={lat}
+        lng={lng}
+        onLocationChange={(newLat, newLng) => {
+          setLat(newLat);
+          setLng(newLng);
+        }}
+        onAddressGuess={(guessedAddressLine, guessedArea) => {
+          const guessed = [guessedAddressLine, guessedArea].filter(Boolean).join(", ");
+          if (guessed) setAddress(guessed);
+        }}
       />
 
       <div className="grid gap-5 sm:grid-cols-2">
@@ -67,9 +89,10 @@ export function RoPlantForm({ plant, onDone }: { plant?: RoPlantRow; onDone?: ()
           step="any"
           min={-90}
           max={90}
-          defaultValue={plant?.latitude ?? ""}
+          value={lat}
+          onChange={(e) => setLat(e.target.value)}
           placeholder="24.914440"
-          hint="Between -90 and 90. From Google Maps: right-click the exact spot → click the coordinates to copy them."
+          hint="Search above to fill this in automatically, or paste coordinates directly."
           required
         />
         <Input
@@ -79,7 +102,8 @@ export function RoPlantForm({ plant, onDone }: { plant?: RoPlantRow; onDone?: ()
           step="any"
           min={-180}
           max={180}
-          defaultValue={plant?.longitude ?? ""}
+          value={lng}
+          onChange={(e) => setLng(e.target.value)}
           placeholder="67.029831"
           hint="Between -180 and 180."
           required
