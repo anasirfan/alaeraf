@@ -7,20 +7,44 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { Faq } from "@/components/ui/Faq";
 import { Ripple } from "@/components/visuals/Ornaments";
+import { ProductGrid } from "@/components/catalog/ProductGrid";
 import { water } from "@/data/content";
 import { routes } from "@/lib/site";
+import { createPublicClient } from "@/lib/supabase/public";
+import { listActiveProductsForStorefront, type ProductWithPrimaryImage } from "@/lib/catalog/products";
 
 export const metadata: Metadata = {
   title: "RO Drinking Water",
   description: water.lede,
 };
 
+// Static generation with a periodic background refresh — see the same note
+// on /hair-oil/page.tsx: createPublicClient never touches cookies, so this
+// page stays eligible for ISR instead of becoming fully dynamic.
+export const revalidate = 300;
+
+/**
+ * Real catalog data only — never invented. Fails soft to an empty list
+ * (ProductGrid's own empty state) if Supabase is briefly unreachable,
+ * rather than surfacing a raw error or failing the whole page.
+ */
+async function getWaterProducts(): Promise<ProductWithPrimaryImage[]> {
+  try {
+    const supabase = createPublicClient();
+    return await listActiveProductsForStorefront(supabase, { productType: "ro_water" });
+  } catch {
+    return [];
+  }
+}
+
 /**
  * The water product page, given its own cinematic identity rather than the
  * Home teaser's centred layout: a full-bleed ripple banner, a source-to-door
  * timeline, a dark stat band, and a mirrored FAQ split.
  */
-export default function RoWaterPage() {
+export default async function RoWaterPage() {
+  const products = await getWaterProducts();
+
   return (
     <>
       {/* Full-bleed banner */}
@@ -66,6 +90,31 @@ export default function RoWaterPage() {
               {water.cta}
               <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
             </Button>
+          </Reveal>
+        </Container>
+      </section>
+
+      {/* Shop — real Supabase catalog data, active products only */}
+      <section className="bg-ivory py-20 sm:py-28">
+        <Container>
+          <div className="mx-auto max-w-xl text-center">
+            <Reveal>
+              <Eyebrow tone="water" className="justify-center">
+                Shop the Range
+              </Eyebrow>
+            </Reveal>
+            <Reveal delay={80}>
+              <h2 className="display-2 mt-6 font-display text-forest">Available now.</h2>
+            </Reveal>
+          </div>
+
+          <Reveal delay={140} className="mt-12">
+            <ProductGrid
+              products={products}
+              accent="water"
+              icon="droplets"
+              emptyMessage="Our RO water lineup will appear here shortly. In the meantime, get in touch and we'll help you order directly."
+            />
           </Reveal>
         </Container>
       </section>

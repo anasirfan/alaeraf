@@ -4,9 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Menu, ShoppingBag, X } from "lucide-react";
+import { Menu, ShoppingBag, User, LogOut, X } from "lucide-react";
 import { nav, routes, site } from "@/lib/site";
 import { Container } from "@/components/ui/Container";
+import { createClient } from "@/lib/supabase/client";
+import { logoutAction } from "@/app/account/actions";
+import { useCart } from "@/lib/cart/CartContext";
 
 export function Navbar() {
   const pathname = usePathname();
@@ -14,6 +17,37 @@ export function Navbar() {
 
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+
+  // Resolved client-side, deliberately: the navbar sits in the root layout
+  // above every page, including the site's static marketing pages. Checking
+  // auth server-side here (cookies()/getUser() in a layout) would force the
+  // whole route tree into per-request dynamic rendering just to decide
+  // "Login" vs "Account" in one corner — real auth boundaries (/account,
+  // /account/addresses) stay server-side in proxy.ts and account/layout.tsx,
+  // which is what actually needs to be secure, not this display detail.
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  const { itemCount } = useCart();
+
+  useEffect(() => {
+    const supabase = createClient();
+    let active = true;
+
+    supabase.auth.getUser().then(({ data }) => {
+      if (active) setIsLoggedIn(!!data.user);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (active) setIsLoggedIn(!!session?.user);
+    });
+
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
+  }, []);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 24);
@@ -115,9 +149,59 @@ export function Navbar() {
 
           {/* Actions */}
           <div className="flex items-center gap-2 sm:gap-3">
-            <button
-              type="button"
-              aria-label="Cart — coming soon"
+            {/* Auth — same slot/typography as the desktop nav links either way */}
+            <div
+              className={`hidden items-center gap-4 pr-1 lg:flex ${
+                onDark ? "text-cream/85" : "text-muted"
+              }`}
+            >
+              {isLoggedIn ? (
+                <>
+                  <Link
+                    href={routes.account}
+                    className={`text-[0.8125rem] font-medium tracking-[0.04em] transition-colors duration-300 ${
+                      onDark ? "hover:text-cream" : "hover:text-forest"
+                    }`}
+                  >
+                    Account
+                  </Link>
+                  <form action={logoutAction}>
+                    <button
+                      type="submit"
+                      className={`inline-flex items-center gap-1.5 text-[0.8125rem] font-medium tracking-[0.04em] transition-colors duration-300 ${
+                        onDark ? "hover:text-cream" : "hover:text-forest"
+                      }`}
+                    >
+                      <LogOut className="h-3.5 w-3.5" strokeWidth={1.75} />
+                      Logout
+                    </button>
+                  </form>
+                </>
+              ) : (
+                <>
+                  <Link
+                    href={routes.login}
+                    className={`text-[0.8125rem] font-medium tracking-[0.04em] transition-colors duration-300 ${
+                      onDark ? "hover:text-cream" : "hover:text-forest"
+                    }`}
+                  >
+                    Login
+                  </Link>
+                  <Link
+                    href={routes.signup}
+                    className={`text-[0.8125rem] font-medium tracking-[0.04em] transition-colors duration-300 ${
+                      onDark ? "hover:text-cream" : "hover:text-forest"
+                    }`}
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
+            </div>
+
+            <Link
+              href={routes.cart}
+              aria-label={itemCount > 0 ? `Cart, ${itemCount} item${itemCount === 1 ? "" : "s"}` : "Cart"}
               className={`relative hidden h-10 w-10 items-center justify-center rounded-full border transition-colors duration-300 sm:flex ${
                 onDark
                   ? "border-cream/25 text-cream hover:bg-cream/10"
@@ -125,13 +209,17 @@ export function Navbar() {
               }`}
             >
               <ShoppingBag className="h-[1.05rem] w-[1.05rem]" strokeWidth={1.5} />
-              <span
-                className={`absolute right-2 top-2 h-1.5 w-1.5 rounded-full ${
-                  onDark ? "bg-sage-soft" : "bg-sage"
-                }`}
-                aria-hidden="true"
-              />
-            </button>
+              {itemCount > 0 && (
+                <span
+                  className={`absolute -right-1 -top-1 flex h-[1.15rem] min-w-[1.15rem] items-center justify-center rounded-full px-1 text-[0.6rem] font-semibold tabular-nums ${
+                    onDark ? "bg-sage-soft text-forest" : "bg-forest text-cream"
+                  }`}
+                  aria-hidden="true"
+                >
+                  {itemCount > 99 ? "99+" : itemCount}
+                </span>
+              )}
+            </Link>
 
             <Link
               href={routes.orderNow}
@@ -225,13 +313,61 @@ export function Navbar() {
             >
               Order Now
             </Link>
-            <button
-              type="button"
-              className="flex w-full items-center justify-center gap-2 rounded-full border border-cream/30 px-6 py-3.5 text-sm font-semibold text-cream"
+            <Link
+              href={routes.cart}
+              onClick={() => setOpen(false)}
+              className="relative flex w-full items-center justify-center gap-2 rounded-full border border-cream/30 px-6 py-3.5 text-sm font-semibold text-cream"
             >
               <ShoppingBag className="h-4 w-4" strokeWidth={1.5} />
               Cart
-            </button>
+              {itemCount > 0 && (
+                <span className="ml-1 flex h-[1.15rem] min-w-[1.15rem] items-center justify-center rounded-full bg-sage-soft px-1 text-[0.65rem] font-semibold tabular-nums text-forest">
+                  {itemCount > 99 ? "99+" : itemCount}
+                </span>
+              )}
+            </Link>
+
+            {isLoggedIn ? (
+              <>
+                <Link
+                  href={routes.account}
+                  onClick={() => setOpen(false)}
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-cream/30 px-6 py-3.5 text-sm font-semibold text-cream"
+                >
+                  <User className="h-4 w-4" strokeWidth={1.5} />
+                  Account
+                </Link>
+                <form action={logoutAction}>
+                  <button
+                    type="submit"
+                    onClick={() => setOpen(false)}
+                    className="flex w-full items-center justify-center gap-2 rounded-full border border-cream/30 px-6 py-3.5 text-sm font-semibold text-cream"
+                  >
+                    <LogOut className="h-4 w-4" strokeWidth={1.5} />
+                    Logout
+                  </button>
+                </form>
+              </>
+            ) : (
+              <>
+                <Link
+                  href={routes.login}
+                  onClick={() => setOpen(false)}
+                  className="flex w-full items-center justify-center gap-2 rounded-full border border-cream/30 px-6 py-3.5 text-sm font-semibold text-cream"
+                >
+                  <User className="h-4 w-4" strokeWidth={1.5} />
+                  Login
+                </Link>
+                <Link
+                  href={routes.signup}
+                  onClick={() => setOpen(false)}
+                  className="flex w-full items-center justify-center rounded-full border border-cream/30 px-6 py-3.5 text-sm font-semibold text-cream"
+                >
+                  Sign Up
+                </Link>
+              </>
+            )}
+
             <p className="pt-2 text-center text-[0.7rem] tracking-[0.14em] text-sage-soft/50 uppercase">
               {site.tagline}
             </p>

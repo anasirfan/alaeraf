@@ -34,6 +34,9 @@ type Props = {
   size?: Size;
   className?: string;
   ariaLabel?: string;
+  type?: "button" | "submit" | "reset";
+  onClick?: () => void;
+  disabled?: boolean;
 };
 
 export function Button({
@@ -43,8 +46,13 @@ export function Button({
   size = "md",
   className = "",
   ariaLabel,
+  type = "button",
+  onClick,
+  disabled = false,
 }: Props) {
-  const cls = `${base} ${variants[variant]} ${sizes[size]} ${className}`;
+  const cls = `${base} ${variants[variant]} ${sizes[size]} ${
+    disabled ? "pointer-events-none opacity-60" : ""
+  } ${className}`;
 
   if (href) {
     // External / non-navigational links (tel:, mailto:, http(s), plain hash)
@@ -64,9 +72,15 @@ export function Button({
     );
   }
 
-  // No href: a real button, ready to receive an onClick when commerce is wired.
+  // No href: a real interactive button — used for form submits and actions.
   return (
-    <button type="button" className={cls} aria-label={ariaLabel}>
+    <button
+      type={type}
+      onClick={onClick}
+      disabled={disabled}
+      className={cls}
+      aria-label={ariaLabel}
+    >
       {children}
     </button>
   );

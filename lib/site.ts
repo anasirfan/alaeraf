@@ -25,8 +25,8 @@ export const nav = [
 ] as const;
 
 /**
- * Real routes. `orderNow` and `cart` stay pointed at Contact until checkout
- * is wired up — there is no cart yet, so "ordering" today means reaching us.
+ * Real routes. `orderNow` stays pointed at Contact until checkout is wired
+ * up — placing an actual order today still means reaching us directly.
  */
 export const routes = {
   orderNow: "/contact",
@@ -36,5 +36,12 @@ export const routes = {
   deliveryAreas: "/delivery-areas",
   contact: "/contact",
   faqs: "/faqs",
-  cart: "/contact",
+  cart: "/cart",
+  checkout: "/checkout",
+  checkoutSuccess: "/checkout/success",
+  login: "/login",
+  signup: "/signup",
+  forgotPassword: "/forgot-password",
+  account: "/account",
+  addresses: "/account/addresses",
 } as const;

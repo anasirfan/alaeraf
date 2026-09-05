@@ -7,20 +7,46 @@ import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { Faq } from "@/components/ui/Faq";
 import { LeafGlyph } from "@/components/visuals/Ornaments";
+import { ProductGrid } from "@/components/catalog/ProductGrid";
 import { hairOil } from "@/data/content";
 import { routes } from "@/lib/site";
+import { createPublicClient } from "@/lib/supabase/public";
+import { listActiveProductsForStorefront, type ProductWithPrimaryImage } from "@/lib/catalog/products";
 
 export const metadata: Metadata = {
   title: "Herbal Hair Oil",
   description: hairOil.lede,
 };
 
+// Static generation with a periodic background refresh — the page doesn't
+// need to know who's visiting (createPublicClient never touches cookies),
+// so it stays eligible for ISR instead of becoming fully dynamic like the
+// account/admin routes.
+export const revalidate = 300;
+
+/**
+ * Real catalog data only — never invented. If Supabase is briefly
+ * unreachable at build/revalidate time, this fails soft to an empty list
+ * (ProductGrid's own empty state) rather than surfacing a raw error or
+ * failing the whole page.
+ */
+async function getHairOilProducts(): Promise<ProductWithPrimaryImage[]> {
+  try {
+    const supabase = createPublicClient();
+    return await listActiveProductsForStorefront(supabase, { productType: "hair_oil" });
+  } catch {
+    return [];
+  }
+}
+
 /**
  * A dedicated product page, built with its own layout rather than reusing
  * the Home teaser section: a full-bleed banner, a zig-zag ritual timeline,
  * a horizontal ingredient strip, and a split FAQ.
  */
-export default function HairOilPage() {
+export default async function HairOilPage() {
+  const products = await getHairOilProducts();
+
   return (
     <>
       {/* Full-bleed banner — the page's own identity, not the Home arch layout */}
@@ -66,6 +92,29 @@ export default function HairOilPage() {
               {hairOil.cta}
               <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
             </Button>
+          </Reveal>
+        </Container>
+      </section>
+
+      {/* Shop — real Supabase catalog data, active products only */}
+      <section className="bg-ivory py-20 sm:py-28">
+        <Container>
+          <div className="mx-auto max-w-xl text-center">
+            <Reveal>
+              <Eyebrow className="justify-center">Shop the Range</Eyebrow>
+            </Reveal>
+            <Reveal delay={80}>
+              <h2 className="display-2 mt-6 font-display text-forest">Available now.</h2>
+            </Reveal>
+          </div>
+
+          <Reveal delay={140} className="mt-12">
+            <ProductGrid
+              products={products}
+              accent="botanical"
+              icon="leaf"
+              emptyMessage="Our hair oil lineup will appear here shortly. In the meantime, get in touch and we'll help you order directly."
+            />
           </Reveal>
         </Container>
       </section>

@@ -3,6 +3,7 @@ import { DM_Serif_Display, Manrope } from "next/font/google";
 import { Splash } from "@/components/splash/Splash";
 import { Navbar } from "@/components/navbar/Navbar";
 import { Footer } from "@/components/footer/Footer";
+import { CartProvider } from "@/lib/cart/CartContext";
 import { site } from "@/lib/site";
 import { SPLASH_SESSION_KEY } from "@/lib/splash";
 import "./globals.css";
@@ -80,6 +81,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Deliberately NOT checking auth here: this layout wraps every page,
+  // including the nine static marketing pages, and reading cookies()/
+  // calling Supabase from a layout forces the whole route tree into
+  // per-request dynamic rendering — it would silently turn the entire
+  // static site dynamic just to know whether to show "Login" or "Account"
+  // in the corner of the navbar. Navbar resolves its own auth state
+  // client-side instead (see its file for the reasoning); every actual
+  // security boundary (protecting /account, /account/addresses) still
+  // happens server-side in proxy.ts and app/account/layout.tsx.
   return (
     <html
       lang="en"
@@ -87,10 +97,12 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col bg-ivory font-sans text-ink-text">
         <script dangerouslySetInnerHTML={{ __html: splashPrePaint }} />
-        <Splash />
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <CartProvider>
+          <Splash />
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </CartProvider>
       </body>
     </html>
   );
