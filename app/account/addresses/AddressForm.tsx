@@ -5,6 +5,7 @@ import { LocateFixed } from "lucide-react";
 import { Input, Textarea } from "@/components/ui/Input";
 import { SubmitButton } from "@/components/ui/SubmitButton";
 import { FormMessage } from "@/components/ui/FormMessage";
+import { AddressAutocomplete } from "@/components/address/AddressAutocomplete";
 import type { Database } from "@/types/database.types";
 import { createAddressAction, updateAddressAction, type AddressState } from "./actions";
 
@@ -24,6 +25,11 @@ export function AddressForm({
   const [lat, setLat] = useState(address?.latitude != null ? String(address.latitude) : "");
   const [lng, setLng] = useState(address?.longitude != null ? String(address.longitude) : "");
   const [locateStatus, setLocateStatus] = useState<"idle" | "locating" | "done" | "error">("idle");
+
+  // Controlled only so AddressAutocomplete can fill them in when a place is
+  // picked — typing directly into either field works exactly as before.
+  const [addressLine, setAddressLine] = useState(address?.address_line ?? "");
+  const [area, setArea] = useState(address?.area ?? "");
 
   // Edit mode closes the inline editor as soon as a save succeeds. Create
   // mode leaves the success message on screen — see the "Add another"
@@ -85,12 +91,27 @@ export function AddressForm({
         />
       </div>
 
+      <AddressAutocomplete
+        lat={lat}
+        lng={lng}
+        onLocationChange={(newLat, newLng) => {
+          setLat(newLat);
+          setLng(newLng);
+          setLocateStatus("done");
+        }}
+        onAddressGuess={(guessedAddressLine, guessedArea) => {
+          if (guessedAddressLine) setAddressLine(guessedAddressLine);
+          if (guessedArea) setArea(guessedArea);
+        }}
+      />
+
       <Input
         label="Address"
         name="addressLine"
         type="text"
         placeholder="House / street / building"
-        defaultValue={address?.address_line ?? ""}
+        value={addressLine}
+        onChange={(e) => setAddressLine(e.target.value)}
         required
       />
 
@@ -99,7 +120,8 @@ export function AddressForm({
         name="area"
         type="text"
         placeholder="e.g. Nazimabad, Karachi"
-        defaultValue={address?.area ?? ""}
+        value={area}
+        onChange={(e) => setArea(e.target.value)}
       />
 
       <Textarea
