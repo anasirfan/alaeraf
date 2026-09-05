@@ -46,22 +46,38 @@ export function CheckoutClient({ addresses }: { addresses: AddressWithDelivery[]
 
   const [state, formAction] = useActionState(placeOrderAction, undefined);
 
+  // The RO-plant delivery-radius check (computed server-side in
+  // app/checkout/page.tsx, per address) only ever matters for RO Water —
+  // it's shipped from a physical plant, so only water can be geography-
+  // limited. Hair Oil ships by courier and is orderable to any address,
+  // radius or no coordinates at all (see create_order(), 0010_hair_oil_
+  // delivery_fix.sql, which enforces this same rule server-side — this is
+  // purely the matching display logic, not the actual gate). `items`
+  // (not just `orderableItems`) is used here since productType is known
+  // immediately from the saved cart snapshot, before reconciliation runs.
+  const cartNeedsRoPlant = items.some((item) => item.productType === "ro_water");
+  const effectiveAddresses = useMemo<AddressWithDelivery[]>(
+    () => (cartNeedsRoPlant ? addresses : addresses.map((a) => ({ ...a, deliverable: "yes" as const }))),
+    [addresses, cartNeedsRoPlant],
+  );
+
   // Tracks only an explicit user choice — null means "nothing chosen yet,"
   // not "no address exists." The effective selection below derives a
-  // sensible default purely from render-time data (current `addresses`
-  // prop), so a newly saved address arriving via revalidatePath is picked
-  // up automatically without an effect re-deriving state from props.
+  // sensible default purely from render-time data (current
+  // `effectiveAddresses`), so a newly saved address arriving via
+  // revalidatePath is picked up automatically without an effect
+  // re-deriving state from props.
   const [userSelectedId, setUserSelectedId] = useState<string | null>(null);
 
   const selectedAddressId = useMemo(() => {
-    if (userSelectedId && addresses.some((a) => a.id === userSelectedId)) {
+    if (userSelectedId && effectiveAddresses.some((a) => a.id === userSelectedId)) {
       return userSelectedId;
     }
     const fallback =
-      addresses.find((a) => a.is_default && a.deliverable === "yes") ??
-      addresses.find((a) => a.deliverable === "yes");
+      effectiveAddresses.find((a) => a.is_default && a.deliverable === "yes") ??
+      effectiveAddresses.find((a) => a.deliverable === "yes");
     return fallback?.id ?? null;
-  }, [userSelectedId, addresses]);
+  }, [userSelectedId, effectiveAddresses]);
 
   useEffect(() => {
     if (state?.orderNumber) {
@@ -106,7 +122,7 @@ export function CheckoutClient({ addresses }: { addresses: AddressWithDelivery[]
     );
   }
 
-  const selectedAddress = addresses.find((a) => a.id === selectedAddressId) ?? null;
+  const selectedAddress = effectiveAddresses.find((a) => a.id === selectedAddressId) ?? null;
   const cartNeedsAttention = hasUnavailable || hasOutOfStock;
   const canPlaceOrder =
     !!selectedAddress &&
@@ -151,7 +167,7 @@ export function CheckoutClient({ addresses }: { addresses: AddressWithDelivery[]
             <div>
               <h2 className="font-display text-lg text-forest">Delivery Address</h2>
               <div className="mt-4">
-                <AddressPicker addresses={addresses} selectedId={selectedAddressId} onSelect={setUserSelectedId} />
+                <AddressPicker addresses={effectiveAddresses} selectedId={selectedAddressId} onSelect={setUserSelectedId} />
               </div>
             </div>
 

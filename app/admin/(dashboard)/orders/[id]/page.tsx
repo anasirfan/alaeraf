@@ -60,8 +60,14 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
   // 0003_functions.sql). It can differ from what was true when the order was
   // actually placed (RO plants/radii may have changed since), so it's shown
   // as a live signal, not treated as authoritative order history.
+  //
+  // Only meaningful for an order that actually needed an RO plant — a
+  // Hair-Oil-only order never gets one assigned (create_order(),
+  // 0010_hair_oil_delivery_fix.sql), so `order.ro_plant` being null here
+  // means the radius check never applied to this order in the first place,
+  // not that the address is somehow "outside range."
   let currentlyDeliverable: boolean | null = null;
-  if (order.address?.latitude != null && order.address?.longitude != null) {
+  if (order.ro_plant && order.address?.latitude != null && order.address?.longitude != null) {
     const { data, error } = await supabase.rpc("is_delivery_available", {
       lat: order.address.latitude,
       lng: order.address.longitude,
@@ -150,7 +156,9 @@ export default async function AdminOrderDetailPage({ params }: { params: Promise
                   <div className="flex items-center gap-2 text-sm">
                     <Droplets className="h-4 w-4 shrink-0 text-aqua-deep" strokeWidth={1.5} />
                     <span className="text-muted">RO Plant:</span>
-                    <span className="font-medium text-ink-text">{order.ro_plant?.name ?? "Not assigned"}</span>
+                    <span className="font-medium text-ink-text">
+                      {order.ro_plant?.name ?? "Not applicable — Hair Oil ships by courier, no plant involved"}
+                    </span>
                   </div>
                   {currentlyDeliverable !== null && (
                     <span

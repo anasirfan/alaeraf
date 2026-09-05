@@ -38,8 +38,13 @@ export default async function CheckoutPage() {
   // Delivery eligibility is determined here, server-side, from each
   // address's own stored coordinates — never from anything the browser
   // supplies at checkout time. is_delivery_available() (0003_functions.sql)
-  // is the same PostGIS radius check create_order() itself will re-run, so
-  // what the customer sees here matches what actually gets enforced.
+  // is the same PostGIS radius check create_order() itself will re-run for
+  // an order containing RO Water — but this page has no idea what's in the
+  // cart (the cart is client-side only), so it always computes this value.
+  // CheckoutClient.tsx is what actually decides whether it applies: for a
+  // Hair-Oil-only cart it overrides every address's `deliverable` to "yes"
+  // before rendering, matching create_order()'s own rule (0010_hair_oil_
+  // delivery_fix.sql) that Hair Oil is never geography-limited.
   const withDelivery: AddressWithDelivery[] = await Promise.all(
     list.map(async (address) => {
       if (address.latitude == null || address.longitude == null) {
