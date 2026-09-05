@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { CheckCircle2, MapPin, Phone, Plus, TriangleAlert } from "lucide-react";
-import { AddressForm } from "@/app/account/addresses/AddressForm";
-import type { AddressWithDelivery } from "@/app/checkout/types";
+import { AddressForm } from "@/app/(site)/account/addresses/AddressForm";
+import type { AddressWithDelivery } from "@/app/(site)/checkout/types";
 
 const DELIVERY_LABEL: Record<AddressWithDelivery["deliverable"], { text: string; tone: string } | null> = {
   yes: { text: "Delivery available", tone: "text-forest" },

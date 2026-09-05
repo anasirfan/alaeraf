@@ -8,7 +8,7 @@ import { Menu, ShoppingBag, User, LogOut, X } from "lucide-react";
 import { nav, routes, site } from "@/lib/site";
 import { Container } from "@/components/ui/Container";
 import { createClient } from "@/lib/supabase/client";
-import { logoutAction } from "@/app/account/actions";
+import { logoutAction } from "@/app/(site)/account/actions";
 import { useCart } from "@/lib/cart/CartContext";
 
 export function Navbar() {

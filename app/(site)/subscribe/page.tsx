@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { listActiveProductsForStorefront } from "@/lib/catalog/products";
 import { listActiveSubscriptionPlans } from "@/lib/subscriptions/queries";
 import { SubscribeClient } from "./SubscribeClient";
-import type { AddressWithDelivery } from "@/app/checkout/types";
+import type { AddressWithDelivery } from "@/app/(site)/checkout/types";
 
 export const metadata: Metadata = {
   title: "Subscribe",

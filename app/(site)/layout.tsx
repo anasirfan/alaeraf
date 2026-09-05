@@ -6,7 +6,7 @@ import { Footer } from "@/components/footer/Footer";
 import { CartProvider } from "@/lib/cart/CartContext";
 import { site } from "@/lib/site";
 import { SPLASH_SESSION_KEY } from "@/lib/splash";
-import "./globals.css";
+import "../globals.css";
 
 /**
  * Runs while the document is still parsing, before anything is painted.

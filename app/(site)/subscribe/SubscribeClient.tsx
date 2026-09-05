@@ -14,7 +14,7 @@ import { routes } from "@/lib/site";
 import { createSubscriptionAction } from "./actions";
 import type { SubscriptionPlanRow } from "@/lib/subscriptions/queries";
 import type { ProductWithPrimaryImage } from "@/lib/catalog/products";
-import type { AddressWithDelivery } from "@/app/checkout/types";
+import type { AddressWithDelivery } from "@/app/(site)/checkout/types";
 
 function formatPrice(value: number) {
   return `Rs ${Math.round(value).toLocaleString()}`;
