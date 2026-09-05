@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import "@geoapify/geocoder-autocomplete/styles/minimal.css";
 import "leaflet/dist/leaflet.css";
 import type { GeocoderAutocomplete } from "@geoapify/geocoder-autocomplete";
@@ -69,6 +69,10 @@ export function AddressAutocomplete({
   const markerRef = useRef<LeafletMarker | null>(null);
   const autocompleteRef = useRef<GeocoderAutocomplete | null>(null);
   const [status, setStatus] = useState<"loading" | "ready" | "unavailable">("loading");
+  // True only while a suggestions request is actually in flight (Geoapify's
+  // own request_start/request_end events, debounced internally) — distinct
+  // from `status`, which just tracks whether the widget itself has loaded.
+  const [searching, setSearching] = useState(false);
 
   // onLocationChange/onAddressGuess are recreated every render by the
   // parent form (they close over its state setters) — refs keep this
@@ -135,6 +139,9 @@ export function AddressAutocomplete({
         });
         autocompleteRef.current = autocomplete;
 
+        autocomplete.on("request_start", () => setSearching(true));
+        autocomplete.on("request_end", () => setSearching(false));
+
         autocomplete.on("select", (feature: GeoapifyFeature | null) => {
           const props = feature?.properties;
           if (props?.lat == null || props?.lon == null) return; // Closed with nothing picked.
@@ -175,7 +182,7 @@ export function AddressAutocomplete({
       <label className="mb-1.5 block text-[0.7rem] font-semibold tracking-[0.08em] text-muted uppercase">
         Search your address
       </label>
-      <div className="relative min-h-[42px]">
+      <div className="relative z-10 min-h-[42px]">
         <div ref={inputContainerRef} className={status === "loading" ? "invisible" : ""} />
         {status === "loading" && (
           <div className="absolute inset-0 flex items-center gap-2 rounded-sm border border-line bg-white px-3 text-sm text-muted/60">
@@ -183,8 +190,26 @@ export function AddressAutocomplete({
             Loading address search…
           </div>
         )}
+        {status === "ready" && searching && (
+          <Loader2
+            className="pointer-events-none absolute top-1/2 right-9 h-4 w-4 -translate-y-1/2 animate-spin text-muted/70"
+            strokeWidth={2}
+            aria-label="Searching…"
+          />
+        )}
       </div>
-      <div ref={mapContainerRef} className="mt-2 h-48 w-full overflow-hidden rounded-sm border border-line bg-cream" />
+      {/*
+        z-10/z-0 (not just DOM order) is what actually keeps the dropdown
+        above the map: Leaflet's own panes use z-index up to 700 internally,
+        which — without the map container establishing its own stacking
+        context here — would otherwise render on top of Geoapify's
+        suggestion list (z-index: 99) regardless of which element comes
+        first in the markup.
+      */}
+      <div
+        ref={mapContainerRef}
+        className="relative z-0 mt-2 h-48 w-full overflow-hidden rounded-sm border border-line bg-cream"
+      />
       {status === "ready" && (
         <p className="mt-1.5 text-[0.7rem] text-muted">
           Pick a suggestion to drop the pin, or drag the pin to fine-tune the exact spot.
