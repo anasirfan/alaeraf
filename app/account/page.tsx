@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Mail, MapPin, ArrowRight, LogOut } from "lucide-react";
+import { Mail, MapPin, ArrowRight, LogOut, Droplets } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
@@ -103,6 +103,26 @@ export default async function AccountPage() {
             </div>
             <Button href={routes.addresses} variant="outline" size="md" className="self-start">
               Manage Addresses
+              <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
+            </Button>
+          </Reveal>
+
+          <Reveal
+            delay={260}
+            className="flex flex-col justify-between gap-6 rounded-sm border border-line bg-sand/50 p-6 sm:p-8 lg:col-span-2"
+          >
+            <div>
+              <div className="flex h-10 w-10 items-center justify-center rounded-full border border-line bg-ivory text-aqua-deep">
+                <Droplets className="h-4 w-4" strokeWidth={1.75} />
+              </div>
+              <h2 className="mt-4 font-display text-xl text-forest">My Subscriptions</h2>
+              <p className="mt-1.5 text-sm leading-relaxed text-muted">
+                Set up recurring monthly RO water delivery, or manage a subscription you already have —
+                paid cash on each delivery.
+              </p>
+            </div>
+            <Button href={routes.accountSubscriptions} variant="outline" size="md" className="self-start">
+              Manage Subscriptions
               <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
             </Button>
           </Reveal>

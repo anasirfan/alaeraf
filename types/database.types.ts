@@ -479,6 +479,29 @@ export type Database = {
           order_number: string;
         }[];
       };
+      create_subscription: {
+        Args: {
+          p_plan_id: string;
+          p_address_id: string;
+          p_items: Json;
+          p_notes: string | null;
+        };
+        Returns: { subscription_id: string }[];
+      };
+      update_subscription_status: {
+        Args: {
+          p_subscription_id: string;
+          p_status: SubscriptionStatus;
+        };
+        Returns: undefined;
+      };
+      create_subscription_delivery_order: {
+        Args: { p_subscription_id: string };
+        Returns: {
+          order_id: string;
+          order_number: string;
+        }[];
+      };
     };
 
     Enums: {

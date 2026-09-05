@@ -44,4 +44,6 @@ export const routes = {
   forgotPassword: "/forgot-password",
   account: "/account",
   addresses: "/account/addresses",
+  subscribe: "/subscribe",
+  accountSubscriptions: "/account/subscriptions",
 } as const;
