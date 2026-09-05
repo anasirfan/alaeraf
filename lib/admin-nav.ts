@@ -16,12 +16,7 @@ export type AdminNavItem = {
   icon: LucideIcon;
 };
 
-/**
- * Every section the admin sidebar links to. Dashboard is live; the rest are
- * intentionally stub "coming soon" pages for now (see app/admin/(dashboard)/
- * — the CRUD screens themselves are a later phase, but the nav shell is
- * built to hold them without further restructuring.
- */
+/** Every section the admin sidebar links to — all fully built. */
 export const adminNav: AdminNavItem[] = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
   { label: "Products", href: "/admin/products", icon: Package },

@@ -451,6 +451,27 @@ export type Database = {
           },
         ];
       };
+
+      site_settings: {
+        Row: {
+          id: boolean;
+          business_phone_display: string | null;
+          business_phone_dial: string | null;
+          business_email: string | null;
+          business_address: string | null;
+          updated_at: string;
+        };
+        Insert: {
+          id?: boolean;
+          business_phone_display?: string | null;
+          business_phone_dial?: string | null;
+          business_email?: string | null;
+          business_address?: string | null;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["site_settings"]["Insert"]>;
+        Relationships: [];
+      };
     };
 
     Views: Record<string, never>;

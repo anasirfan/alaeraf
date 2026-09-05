@@ -12,6 +12,7 @@ import { hairOil } from "@/data/content";
 import { routes } from "@/lib/site";
 import { createPublicClient } from "@/lib/supabase/public";
 import { listActiveProductsForStorefront, type ProductWithPrimaryImage } from "@/lib/catalog/products";
+import { getSiteSettings, SITE_SETTINGS_DEFAULTS } from "@/lib/settings/queries";
 
 export const metadata: Metadata = {
   title: "Herbal Hair Oil",
@@ -44,8 +45,18 @@ async function getHairOilProducts(): Promise<ProductWithPrimaryImage[]> {
  * the Home teaser section: a full-bleed banner, a zig-zag ritual timeline,
  * a horizontal ingredient strip, and a split FAQ.
  */
+async function getCallPhone(): Promise<string> {
+  try {
+    const supabase = createPublicClient();
+    const settings = await getSiteSettings(supabase);
+    return settings.business_phone_dial;
+  } catch {
+    return SITE_SETTINGS_DEFAULTS.business_phone_dial;
+  }
+}
+
 export default async function HairOilPage() {
-  const products = await getHairOilProducts();
+  const [products, callPhone] = await Promise.all([getHairOilProducts(), getCallPhone()]);
 
   return (
     <>
@@ -88,7 +99,7 @@ export default async function HairOilPage() {
             ))}
           </Reveal>
           <Reveal delay={270} className="mt-9">
-            <Button href="tel:+923472249475" size="lg" variant="light">
+            <Button href={`tel:${callPhone}`} size="lg" variant="light">
               {hairOil.cta}
               <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
             </Button>

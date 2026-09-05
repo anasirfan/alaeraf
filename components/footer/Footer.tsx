@@ -4,9 +4,37 @@ import { ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { footer, hero } from "@/data/content";
 import { site } from "@/lib/site";
+import { createPublicClient } from "@/lib/supabase/public";
+import { getSiteSettings } from "@/lib/settings/queries";
 
-export function Footer() {
+/**
+ * Phone/email/service-area now come from the admin-editable site_settings
+ * table (0009_site_settings.sql) instead of the hard-coded footer.contact
+ * array in data/content.ts — everything else about the footer (columns,
+ * blurb, brand) stays static marketing content. createPublicClient() never
+ * calls cookies(), so this doesn't force the pages that render <Footer />
+ * into dynamic rendering — it behaves the same as the existing catalog
+ * reads on the Hair Oil/RO Water pages.
+ */
+type FooterContactRow = { label: string; value: string; href?: string };
+
+async function getFooterContact(): Promise<FooterContactRow[]> {
+  const supabase = createPublicClient();
+  const settings = await getSiteSettings(supabase);
+
+  return [
+    { label: "Phone", value: settings.business_phone_display, href: `tel:${settings.business_phone_dial}` },
+    { label: "Website", value: "www.al-aeraf.com", href: "https://www.al-aeraf.com" },
+    settings.business_email
+      ? { label: "Email", value: settings.business_email, href: `mailto:${settings.business_email}` }
+      : { label: "Email", value: "Email address to be added" },
+    { label: "Service area", value: settings.business_address },
+  ];
+}
+
+export async function Footer() {
   const year = new Date().getFullYear();
+  const contact = await getFooterContact();
 
   return (
     <footer id="contact" className="scroll-mt-20 bg-forest text-cream">
@@ -83,7 +111,7 @@ export function Footer() {
           <div className="lg:col-span-3">
             <h2 className="eyebrow text-sage-soft/70">Contact</h2>
             <dl className="mt-5 space-y-3.5">
-              {footer.contact.map((row) => (
+              {contact.map((row) => (
                 <div key={row.label}>
                   <dt className="text-[0.7rem] tracking-[0.14em] text-cream/55 uppercase">
                     {row.label}

@@ -24,12 +24,11 @@ export const nav = [
   { label: "About", href: "/about" },
 ] as const;
 
-/**
- * Real routes. `orderNow` stays pointed at Contact until checkout is wired
- * up — placing an actual order today still means reaching us directly.
- */
+/** Real routes. */
 export const routes = {
-  orderNow: "/contact",
+  // Checkout works for both product lines; Hair Oil is first in `nav`
+  // above, so it's the default landing spot for a generic "Order Now" CTA.
+  orderNow: "/hair-oil",
   hairOil: "/hair-oil",
   water: "/ro-water",
   subscription: "/subscription",

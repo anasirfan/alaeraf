@@ -111,7 +111,7 @@ export default function SubscriptionPage() {
                   {subscription.plans.map((plan) => (
                     <td key={plan.name} className="pt-8 pr-4">
                       <Button
-                        href={routes.contact}
+                        href={routes.subscribe}
                         variant={plan.featured ? "solid" : "outline"}
                         className="w-full"
                       >

@@ -12,6 +12,7 @@ import { water } from "@/data/content";
 import { routes } from "@/lib/site";
 import { createPublicClient } from "@/lib/supabase/public";
 import { listActiveProductsForStorefront, type ProductWithPrimaryImage } from "@/lib/catalog/products";
+import { getSiteSettings, SITE_SETTINGS_DEFAULTS } from "@/lib/settings/queries";
 
 export const metadata: Metadata = {
   title: "RO Drinking Water",
@@ -42,8 +43,18 @@ async function getWaterProducts(): Promise<ProductWithPrimaryImage[]> {
  * Home teaser's centred layout: a full-bleed ripple banner, a source-to-door
  * timeline, a dark stat band, and a mirrored FAQ split.
  */
+async function getCallPhone(): Promise<string> {
+  try {
+    const supabase = createPublicClient();
+    const settings = await getSiteSettings(supabase);
+    return settings.business_phone_dial;
+  } catch {
+    return SITE_SETTINGS_DEFAULTS.business_phone_dial;
+  }
+}
+
 export default async function RoWaterPage() {
-  const products = await getWaterProducts();
+  const [products, callPhone] = await Promise.all([getWaterProducts(), getCallPhone()]);
 
   return (
     <>
@@ -86,7 +97,7 @@ export default async function RoWaterPage() {
             ))}
           </Reveal>
           <Reveal delay={270} className="mt-9">
-            <Button href="tel:+923472249475" size="lg" variant="light">
+            <Button href={`tel:${callPhone}`} size="lg" variant="light">
               {water.cta}
               <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
             </Button>

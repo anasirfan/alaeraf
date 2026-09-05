@@ -245,7 +245,7 @@ export const subscription = {
     },
   ],
   cta: "Explore Plans",
-  disclaimer: "Plans shown for illustration. Pricing and scheduling coming soon.",
+  disclaimer: "Your exact monthly price is calculated from the RO Water product's current price when you subscribe. Cash on Delivery — no online payment required.",
   howItWorks: [
     {
       step: "01",
@@ -265,21 +265,21 @@ export const subscription = {
     {
       step: "04",
       title: "Adjust anytime",
-      body: "Pause a cycle, change quantity or switch plans as your needs change.",
+      body: "Pause, resume or cancel from your account whenever your needs change.",
     },
   ],
   faq: [
     {
       q: "Is there a minimum commitment?",
-      a: "No — plans can be paused or adjusted month to month.",
+      a: "No — you can pause or cancel from your account at any time, no minimum term.",
     },
     {
       q: "How do I sign up?",
-      a: "Subscription sign-up isn't live on the site yet. Reach out through the Contact page and we'll set up your schedule directly.",
+      a: "Sign up on the Subscribe page — pick your plan, quantity and delivery address, and you're set. Payment is Cash on Delivery, same as a regular order.",
     },
     {
       q: "Can I change my plan later?",
-      a: "Yes — quantity and frequency can be adjusted at the start of any cycle.",
+      a: "You can pause, resume, or cancel anytime from My Account → Subscriptions. To change the product, quantity or address, cancel and start a new subscription.",
     },
   ],
 } as const;
@@ -298,7 +298,7 @@ export const delivery = {
     "Nearby areas",
   ],
   cta: "Check Your Area",
-  note: "Live coverage checking is coming soon.",
+  note: "Delivery eligibility is confirmed automatically from your saved address at checkout or when subscribing.",
   howDelivery: [
     {
       step: "01",

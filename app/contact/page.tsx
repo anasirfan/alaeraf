@@ -1,20 +1,69 @@
 import type { Metadata } from "next";
-import { ArrowRight, MapPin, Phone, Globe } from "lucide-react";
+import { ArrowRight, MapPin, Phone, Globe, Mail } from "lucide-react";
 import { Container } from "@/components/ui/Container";
 import { Button } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/Eyebrow";
 import { Reveal } from "@/components/ui/Reveal";
 import { contactPage } from "@/data/content";
 import { routes } from "@/lib/site";
+import { createPublicClient } from "@/lib/supabase/public";
+import { getSiteSettings } from "@/lib/settings/queries";
 
 export const metadata: Metadata = {
   title: "Contact",
   description: contactPage.lede,
 };
 
-const icons = [Phone, Globe, MapPin];
+/**
+ * The "Call or WhatsApp" and "Service area" values (and, once set, Email)
+ * now come from the admin-editable site_settings table instead of the
+ * hard-coded contactPage.channels in data/content.ts — everything else on
+ * this page (eyebrow, headline, lede) stays static marketing copy.
+ */
+async function getContactChannels() {
+  const supabase = createPublicClient();
+  const settings = await getSiteSettings(supabase);
 
-export default function ContactPage() {
+  const channels = [
+    {
+      label: "Call or WhatsApp",
+      value: settings.business_phone_display,
+      href: `tel:${settings.business_phone_dial}`,
+      note: "Fastest way to reach us for orders and delivery questions.",
+      icon: Phone,
+    },
+    {
+      label: "Website",
+      value: "www.al-aeraf.com",
+      href: "https://www.al-aeraf.com",
+      note: "",
+      icon: Globe,
+    },
+    {
+      label: "Service area",
+      value: settings.business_address,
+      href: null,
+      note: "See the full list on the Delivery Areas page.",
+      icon: MapPin,
+    },
+  ];
+
+  if (settings.business_email) {
+    channels.push({
+      label: "Email",
+      value: settings.business_email,
+      href: `mailto:${settings.business_email}`,
+      note: "",
+      icon: Mail,
+    });
+  }
+
+  return channels;
+}
+
+export default async function ContactPage() {
+  const channels = await getContactChannels();
+
   return (
     <section className="bg-ivory pt-[7.5rem] pb-24 sm:pt-40 sm:pb-32">
       <Container>
@@ -33,8 +82,8 @@ export default function ContactPage() {
         </div>
 
         <div className="mx-auto mt-16 grid max-w-4xl gap-6 border-t border-line pt-12 sm:grid-cols-3">
-          {contactPage.channels.map((channel, i) => {
-            const Icon = icons[i] ?? Phone;
+          {channels.map((channel, i) => {
+            const Icon = channel.icon;
             return (
               <Reveal key={channel.label} delay={120 + i * 90}>
                 <div className="flex h-9 w-9 items-center justify-center rounded-full border border-line text-forest">
@@ -68,8 +117,8 @@ export default function ContactPage() {
           className="mx-auto mt-16 flex max-w-4xl flex-col items-start gap-4 rounded-sm border border-line bg-sand/60 p-8 sm:flex-row sm:items-center sm:justify-between"
         >
           <p className="max-w-sm text-sm leading-relaxed text-muted">
-            Online ordering isn&apos;t live yet — for now, every order and subscription is set up
-            directly over a call or message.
+            Prefer to order online? Shop hair oil or RO water directly, or set up a monthly water
+            subscription — Cash on Delivery, no account needed to browse.
           </p>
           <Button href={routes.deliveryAreas} size="lg" variant="outline">
             Check Delivery Areas
