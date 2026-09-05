@@ -37,7 +37,7 @@ as $$
 declare
   v_customer_id uuid := auth.uid();
   v_address record;
-  v_plant record;
+  v_plant_id uuid;
   v_needs_ro_plant boolean;
   v_order_id uuid;
   v_order_number text;
@@ -77,15 +77,19 @@ begin
       raise exception 'Address is missing coordinates — cannot verify delivery eligibility.';
     end if;
 
-    select * into v_plant
+    select plant_id into v_plant_id
     from public.nearest_eligible_ro_plant(v_address.latitude, v_address.longitude);
 
     if not found then
       raise exception 'Delivery is not available for this address yet.';
     end if;
   else
-    -- Hair Oil only: no plant involved, no coordinate requirement.
-    v_plant := null;
+    -- Hair Oil only: no plant involved, no coordinate requirement. Left as
+    -- a plain NULL uuid (never a NULL *record*, which plpgsql treats as
+    -- "not assigned yet" and throws on any field access — v_plant.plant_id
+    -- below would have raised an unrelated, unhandled error for exactly
+    -- the Hair-Oil-only orders this migration exists to fix).
+    v_plant_id := null;
   end if;
 
   -- Pass 1: validate every line and total it up, pricing strictly from the
@@ -114,7 +118,7 @@ begin
     subtotal, delivery_fee, total, notes
   )
   values (
-    v_customer_id, p_address_id, v_plant.plant_id,
+    v_customer_id, p_address_id, v_plant_id,
     v_subtotal, v_delivery_fee, v_subtotal + v_delivery_fee, p_notes
   )
   returning id, orders.order_number into v_order_id, v_order_number;
